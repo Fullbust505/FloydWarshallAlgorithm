@@ -1,10 +1,56 @@
 import json
 
 def load_txt_file(n):
+    """Loads the graph of the corresponding given integer
+
+    Args:
+        n (int): The index of the desired graph
+
+    Returns:
+        str: The string of the content of the file
+    """
     with open(f"./graphs/graph_{n}.txt") as f :
         file = f.read()
     return file
 
+def convert_txt_graph_into_dict(file):
+    """Takes a graph freshly read from its txt parent and builds a dictionnary to contain this graph.
+
+    Args:
+        file (str): A string containing the content of a txt file. It needs to follow the following pattern : 
+        
+        number_of_vertices
+        number_of_arcs
+        source_vertex1 destination_vertex1 weight1
+        source_vertex2 destination_vertex2 weight2
+        source_vertex3 destination_vertex3 weight3
+        ...
+
+    Returns:
+        dict: The graph in its dictionnary form
+    """
+    extracted = file.split("\n")
+    n_vertices = int(extracted[0])
+
+    extracted = extracted[2:]   # Remove the two first lines, that are not arcs
+    
+    graph = dict()
+    for vertex in range(n_vertices) :
+        graph[str(vertex)] = None
+
+    for arc in extracted :
+
+        curr_arc = arc.split(" ")
+        curr_vertex = curr_arc[0]
+        dest_vertex = curr_arc[1]
+        weight = int(curr_arc[2])
+
+        if graph[curr_vertex] is None :
+            graph[curr_vertex] = dict()
+        graph[curr_vertex][dest_vertex] = weight
+            
+    return graph
+        
 def sort_list_str(arr):
     """A sorting function for lists of strings, that returns it sorted and still as strings. 
     Defined to make the display_matrix_graph() lighter.
@@ -18,40 +64,6 @@ def sort_list_str(arr):
     temp_arr = list(map(int, arr))
     temp_arr.sort()
     return list(map(str, temp_arr))
-
-def convert_txt_graph_into_dict(file):
-    extracted = file.split("\n")
-    n_vertices = int(extracted[0])
-    n_arcs = int(extracted[1])
-
-    extracted = extracted[2:]
-    
-    graph = dict()
-    for vertex in range(n_vertices) :
-        graph[str(vertex)] = None
-    for arc in range(n_arcs) :
-        curr_vertex = extracted[arc][0]
-        dest_vertex = extracted[arc][2]
-        weight = int(extracted[arc][4])
-        if graph[curr_vertex] is None :
-            graph[curr_vertex] = dict()
-        graph[curr_vertex][dest_vertex] = weight
-    
-    return graph
-        
-
-def load_json_graph(n):
-    """Loads the graph of the corresponding given integer
-
-    Args:
-        n (int): The index of the desired graph
-
-    Returns:
-        dict: The dict containing the graph
-    """
-    with open(f'./graphs/graph_{n}.json') as f:
-        graph = json.load(f)
-    return graph
 
 def verify_graph(graph) :
     """Verifies if a given graph is correctly initialized, checking for type errors or missing values
@@ -78,6 +90,7 @@ def verify_graph(graph) :
     except ValueError as e :
         print(f"Error: {e}")
         return False
+    
     except TypeError as e:
         print(f"Error : {e}")
         return False
@@ -115,12 +128,8 @@ def display_matrix_graph(graph):
 
 
 if __name__== '__main__' :
-    graph_1 = load_json_graph(1)
-    print(graph_1)
-    
     graph_1 = load_txt_file(1)
     graph_1 = convert_txt_graph_into_dict(graph_1)
-
 
     verify_graph(graph_1)
 
