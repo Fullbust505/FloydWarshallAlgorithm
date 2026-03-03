@@ -86,9 +86,9 @@ def display_matrix_graph(graph):
             print(str(i) + " "*(2*size+2))      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
         else :
             curr_row = str(i) + " "         # number at start + extra space makes up for the 2 extra spaces used for spacing on top
-            for i in range(size) :
-                if str(i) in graph["vertices"][vertex] : 
-                    curr_row += str(graph["vertices"][vertex][str(i)]) + " "
+            for j in range(size) :
+                if str(j) in graph["vertices"][vertex] : 
+                    curr_row += str(graph["vertices"][vertex][str(j)]) + " "
                 else :
                     curr_row += "  "
             print(curr_row)
