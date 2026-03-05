@@ -13,11 +13,11 @@ def load_txt_file(n):
         file = f.read()
     return file
 
-def convert_txt_graph_into_dict(file):
+def convert_txt_graph_into_dict(n):
     """Takes a graph freshly read from its txt parent and builds a dictionnary to contain this graph.
 
     Args:
-        file (str): A string containing the content of a txt file. It needs to follow the following pattern : 
+        n (int): The index of the desired graph in the "graphs" folder. Its content should follow the pattern : 
         
         number_of_vertices
         number_of_arcs
@@ -29,6 +29,7 @@ def convert_txt_graph_into_dict(file):
     Returns:
         dict: The graph in its dictionnary form
     """
+    file = load_txt_file(n)
     extracted = file.split("\n")
     n_vertices = int(extracted[0])
 
@@ -36,34 +37,19 @@ def convert_txt_graph_into_dict(file):
     
     graph = dict()
     for vertex in range(n_vertices) :
-        graph[str(vertex)] = None
+        graph[vertex] = dict()
 
     for arc in extracted :
 
         curr_arc = arc.split(" ")
-        curr_vertex = curr_arc[0]
-        dest_vertex = curr_arc[1]
+        curr_vertex = int(curr_arc[0])
+        dest_vertex = int(curr_arc[1])
         weight = int(curr_arc[2])
 
-        if graph[curr_vertex] is None :
-            graph[curr_vertex] = dict()
         graph[curr_vertex][dest_vertex] = weight
             
     return graph
         
-def sort_list_str(arr):
-    """A sorting function for lists of strings, that returns it sorted and still as strings. 
-    Defined to make the display_matrix_graph() lighter.
-
-    Args:
-        arr (list): A list or array of numbers wrapped in the string format
-
-    Returns:
-        list: The sorted list, with elements still in string format
-    """
-    temp_arr = list(map(int, arr))
-    temp_arr.sort()
-    return list(map(str, temp_arr))
 
 def verify_graph(graph) :
     """Verifies if a given graph is correctly initialized, checking for type errors or missing values
@@ -80,12 +66,11 @@ def verify_graph(graph) :
     """
     try:
         for vertex in graph :       # Browsing through each vertex
-            if graph[vertex] != None :      # To avoid bumping into vertices w/o successors
-                for weight in graph[vertex].values():   # Browsing through each successor of the vertex
-                    if weight is None :
-                        raise ValueError(f"Missing weight value at vertex {vertex}")
-                    if type(weight) != int:
-                        raise TypeError(f"Incorrect type for vertex's weight {vertex}")
+            for weight in graph[vertex].values():   # Browsing through each successor of the vertex
+                if weight is None :
+                    raise ValueError(f"Missing weight value at vertex {vertex}")
+                if type(weight) != int:
+                    raise TypeError(f"Incorrect type for vertex's weight {vertex}")
                     
     except ValueError as e :
         print(f"Error: {e}")
@@ -105,31 +90,38 @@ def display_matrix_graph(graph):
     Args:
         graph (dict): A graph imported from a JSON file
     """
-    # 1. Sort the vertices, in case they are not sorted
-    sorted_vertices = sort_list_str(list(graph.keys()))
+    # Sort the vertices, in case they are not sorted
+    sorted_vertices = sorted(list(graph.keys()))
 
     size = len(sorted_vertices)
-    # 2. Check each vertex and print out its outgoing edges
+    
+    # Printing header
     print("Matrix form of the graph :")
     print("  " + " ".join(f"{i}" for i in range(size)))     # 2 extra spaces for readibility purpose
 
-    for i in range(len(sorted_vertices)) :
-        vertex = sorted_vertices[i]
-        if graph[vertex] == None :
-            print(str(i) + " "*(2*size+2))      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
+    # 2. For each vertex
+    for vertex in sorted_vertices :
+        curr_row = str(vertex) 
+        # Check if it's empty (no successor)
+        if graph[vertex] == {} :
+            print(curr_row + " 0"*(size))      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
         else :
-            curr_row = str(i) + " "         # number at start + extra space makes up for the 2 extra spaces used for spacing on top
+            # If it has successors (check each column), browse them one by one, to guarentee a good print on the line
             for j in range(size) :
-                if str(j) in graph[vertex] : 
-                    curr_row += str(graph[vertex][str(j)]) + " "
+                curr_row += " "
+                if j in graph[vertex] : 
+                    # Big numbers will make the table unreadable
+                    if graph[vertex][j] >= 1e8 :
+                        curr_row += "∞"
+                    else :
+                        curr_row += str(graph[vertex][j]) 
                 else :
-                    curr_row += "  "
+                    curr_row += "0"
             print(curr_row)
 
 
 if __name__== '__main__' :
-    graph_1 = load_txt_file(1)
-    graph_1 = convert_txt_graph_into_dict(graph_1)
+    graph_1 = convert_txt_graph_into_dict(1)
 
     verify_graph(graph_1)
 
