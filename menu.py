@@ -8,22 +8,12 @@
 #Si on n'a pas d'absorbing cycle, on demande à l'utilisateur de choisir un vertex de début et un vertex de fin
 #À partir de sa réponse, on affiche le plus cours chemin entre les deux vertex choisis
 #Enfin, on demande à l'utilisateur s'il veut recommencer ou quitter le programme
+#Aussi on doit enregistrer les résultats dans un fichier txt
+
+from import_graphs import convert_txt_graph_into_dict, display_matrix_graph
+from floyd_algorithm import floyd_wharshall_algorithm, detect_absorbing_circuit, find_shortest_path, detect_self_cycle
 
 def choose_a_graph():
-    print("Choose a graph to use:")
-    print("1. Graph 1")
-    print("2. Graph 2")
-    print("3. Graph 3")
-    print("4. Graph 4")
-    print("5. Graph 5")
-    print("6. Graph 6")
-    print("7. Graph 7")
-    print("8. Graph 8")
-    print("9. Graph 9")
-    print("10. Graph 10")
-    print("11. Graph 11")
-    print("12. Graph 12")
-    print("13. Graph 13")
     user_choice = int(input("Enter a number between 1 and 13 to choose a graph : "))
     return user_choice
 
@@ -59,24 +49,43 @@ def graph_choice(user_choice):
         return None
 
 
-#def print_matrix(matrix):
 
-"""
-def display_photo():
-    fichier = open("Agathe_s_photo_PRIVATE.txt", "r")
-    contenu = fichier.read()
-    print(contenu)
-    fichier.close()
-"""
+def print_matrix(graph):
+    n = len(graph)
+    matrix = [[INF] * n for _ in range(n)]
+
+    
+    for i in range(n):
+        matrix[i][i] = 0
+
+   
+    for u in graph:
+        for v, weight in graph[u].items():
+            matrix[u][v] = weight
+            
+    return matrix
+
+
+def save_results(graph_n, path, start, end, mat_L, has_absorbing):
+    filename = f"result_graph_{graph_n}.txt"
+    with open(filename, "w") as f:
+        f.write(f"Graph {graph_n}\n")
+        if has_absorbing:
+            f.write("Absorbing circuit detected. No shortest path computed.\n")
+        else:
+            f.write(f"Shortest path from {start} to {end}: {' -> '.join(map(str, path))}\n")
+            cost = mat_L[start][end]
+            f.write(f"Total cost: {cost}\n")
+    print(f"Results saved in {filename}")
 
 def display_menu():
     """
     Mise en page ici
     """
     graph = choose_a_graph()
-    graph_choice(graph)
-    print_matrix(graph)
-    floyd_wharshall_algorithm(graph)
+    graph_nb = graph_choice(graph)
+    print_matrix(graph_nb)
+    floyd_wharshall_algorithm(graph_nb)
     detect_self_cycle(graph)
 
     while detect_self_cycle(graph) == True :
@@ -88,7 +97,7 @@ def display_menu():
     user_start_vertex = int(input("Choose a starting vertex"))
     user_end_vertex = int(input("Choose an ending vertex"))
 
-    #insert here fonction pour le chemin le plus court (user_start_vertex, user_end_vertex)
+    find_shortest_path(mat_P, user_start_vertex, user_end_vertex)
 
     yes_answer = ['y', 'yes', 'oui', 'si', 'da']
     no_answer = ['n', 'no', 'non', 'niet']
@@ -96,8 +105,10 @@ def display_menu():
     if redo_algo.lower in no_answer:
         print("Okie Dockie my little cookie. Have a nice day and don't kill anybody at school *Mwaaaa*")
         exit()
-    else:
+    if redo_algo.lower in yes_answer:
         display_menu()
+    else :
+        exit()
 
 
 display_menu()
