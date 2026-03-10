@@ -95,7 +95,12 @@ def display_menu():
     redo_algo = input("Do you want to try again with another graph ? (Y/N) : ")
     if redo_algo.lower in no_answer:
         print("Okie Dockie my little cookie. Have a nice day and don't kill anybody at school *Mwaaaa*")
-        
+        exit()
+    else:
+        display_menu()
 
 
 display_menu()
+
+
+#to finish
