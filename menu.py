@@ -17,101 +17,65 @@ def choose_a_graph():
     user_choice = int(input("Enter a number between 1 and 13 to choose a graph : "))
     return user_choice
 
-def graph_choice(user_choice):
-    if user_choice == 1:
-        return "Graph 1"
-    elif user_choice == 2:
-        return "Graph 2"
-    elif user_choice == 3:
-        return "Graph 3"
-    elif user_choice == 4:
-        return "Graph 4"
-    elif user_choice == 5:
-        return "Graph 5"
-    elif user_choice == 6:
-        return "Graph 6"
-    elif user_choice == 7:
-        return "Graph 7"
-    elif user_choice == 8:
-        return "Graph 8"
-    elif user_choice == 9:
-        return "Graph 9"
-    elif user_choice == 10:
-        return "Graph 10"
-    elif user_choice == 11:
-        return "Graph 11"
-    elif user_choice == 12:
-        return "Graph 12"
-    elif user_choice == 13:
-        return "Graph 13"
-    else:
-        print("Invalid choice. Please choose a number between 1 and 13.")
-        return None
 
 
 
-def print_matrix(graph):
-    n = len(graph)
-    matrix = [[INF] * n for _ in range(n)]
 
-    
-    for i in range(n):
-        matrix[i][i] = 0
-
-   
-    for u in graph:
-        for v, weight in graph[u].items():
-            matrix[u][v] = weight
-            
-    return matrix
-
-
+#mat_L = the cost, mat_P = which vertex do we pass by
 def save_results(graph_n, path, start, end, mat_L, has_absorbing):
-    filename = f"result_graph_{graph_n}.txt"
+    filename = "result_graph_" + str(graph_n) + ".txt"
     with open(filename, "w") as f:
-        f.write(f"Graph {graph_n}\n")
+        f.write("Graph " + str(graph_n) + "\n")
         if has_absorbing:
             f.write("Absorbing circuit detected. No shortest path computed.\n")
         else:
-            f.write(f"Shortest path from {start} to {end}: {' -> '.join(map(str, path))}\n")
+            f.write("Shortest path from " + str(start) + " to " + str(end) + ": " + " -> ".join(map(str, path)) + "\n")
             cost = mat_L[start][end]
-            f.write(f"Total cost: {cost}\n")
-    print(f"Results saved in {filename}")
+            f.write("Total cost: " + str(cost) + "\n")
+    print("Results saved in " + filename)
+
 
 def display_menu():
-    """
-    Mise en page ici
-    """
-    graph = choose_a_graph()
-    graph_nb = graph_choice(graph)
-    print_matrix(graph_nb)
-    floyd_wharshall_algorithm(graph_nb)
-    detect_self_cycle(graph)
+    graph_index = choose_a_graph()
 
-    while detect_self_cycle(graph) == True :
-        print("Choose another graph")
+    if graph_index<1 or graph_index>13:
         display_menu()
+        return
 
+    graph = convert_txt_graph_into_dict(graph_index)
 
-    print("Let's calculate the shortest path between two vertex") 
-    user_start_vertex = int(input("Choose a starting vertex"))
-    user_end_vertex = int(input("Choose an ending vertex"))
+    display_matrix_graph(graph)
 
-    find_shortest_path(mat_P, user_start_vertex, user_end_vertex)
+    mat_L, mat_P = floyd_wharshall_algorithm(graph)
+
+    if detect_absorbing_circuit(mat_L):
+        print("Absorbing circuit detected. No solution.")
+        save_results(graph_index, [], None, None, mat_L, True)
+    
+    else:
+        print("Let's calculate the shortest path between two vertices")
+        user_start_vertex = int(input("Choose a starting vertex : "))
+        user_end_vertex = int(input("Choose an ending vertex : "))
+
+        if mat_L[user_start_vertex][user_end_vertex] >= 1e8:
+            print("No path exists between " + str(user_start_vertex) + " and " + str(user_end_vertex))
+        
+        else:
+            path = find_shortest_path(mat_P, user_start_vertex, user_end_vertex)
+            print("Shortest path : " + " -> ".join(map(str, path)))                     #To do 1->2->7->...
+            print("Total cost : " + str(mat_L[user_start_vertex][user_end_vertex]))
+            save_results(graph_index, path, user_start_vertex, user_end_vertex, mat_L, False)
 
     yes_answer = ['y', 'yes', 'oui', 'si', 'da']
     no_answer = ['n', 'no', 'non', 'niet']
     redo_algo = input("Do you want to try again with another graph ? (Y/N) : ")
-    if redo_algo.lower in no_answer:
+    if redo_algo.lower() in no_answer:
         print("Okie Dockie my little cookie. Have a nice day and don't kill anybody at school *Mwaaaa*")
         exit()
-    if redo_algo.lower in yes_answer:
+    elif redo_algo.lower() in yes_answer:
         display_menu()
-    else :
+    else:
         exit()
 
 
 display_menu()
-
-
-#to finish
