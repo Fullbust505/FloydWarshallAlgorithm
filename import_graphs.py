@@ -36,10 +36,10 @@ def convert_txt_graph_into_dict(n):
     extracted = extracted[2:]   # Remove the two first lines, that are not arcs
     
     graph = dict()
-    for vertex in range(n_vertices) :
+    for vertex in range(n_vertices):
         graph[vertex] = dict()
 
-    for arc in extracted :
+    for arc in extracted:
 
         curr_arc = arc.split(" ")
         curr_vertex = int(curr_arc[0])
@@ -51,7 +51,7 @@ def convert_txt_graph_into_dict(n):
     return graph
         
 
-def verify_graph(graph) :
+def verify_graph(graph):
     """Verifies if a given graph is correctly initialized, checking for type errors or missing values
 
     Args:
@@ -104,14 +104,14 @@ def display_matrix_graph(graph):
         curr_row = str(vertex) 
         # Check if it's empty (no successor)
         if graph[vertex] == {} :
-            print(curr_row + " 0"*(size))      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
+            print(curr_row + " 0" *size)      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
         else :
             # If it has successors (check each column), browse them one by one, to guarentee a good print on the line
             for j in range(size):
                 curr_row += " "
                 if j in graph[vertex]:
                     # Big numbers will make the table unreadable
-                    if graph[vertex][j] >= 1e8 :
+                    if graph[vertex][j] >= 1e8:
                         curr_row += "∞"
                     else :
                         curr_row += str(graph[vertex][j]) 

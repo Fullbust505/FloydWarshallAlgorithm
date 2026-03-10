@@ -67,7 +67,7 @@ def floyd_wharshall_algorithm(graph):
 if __name__ == "__main__":
     graph_1 = convert_txt_graph_into_dict(1)
     graph_2 = convert_txt_graph_into_dict(2)
-
+    current_graph = convert_txt_graph_into_dict(13)
     
-    floyd_wharshall_algorithm(graph_2)
+    floyd_wharshall_algorithm(current_graph)
     
