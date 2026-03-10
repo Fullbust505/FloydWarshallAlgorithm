@@ -9,16 +9,16 @@ def choose_a_graph():
 
 
 def capture_print(func, *args):
-    buffer = io.StringIO()
-    sys.stdout = buffer
-    func(*args)
-    sys.stdout = sys.__stdout__
-    return buffer.getvalue()
+    buffer = io.StringIO()          #To keep in memory the prints
+    sys.stdout = buffer             #Redirect the prints to the buffer file
+    func(*args)                     #To get the prints by executing the target function
+    sys.stdout = sys.__stdout__     #Stop the redirect
+    return buffer.getvalue()        #put it in the file
 
 
 def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output, floyd_output):
     filename = "result_graph_" + str(graph_n) + ".txt"
-    with open(filename, "w", encoding="utf-8") as f:
+    with open(filename, "w", encoding="utf-8") as f:            #bcs inf symbole doesn't work w/ txt
         f.write("Graph " + str(graph_n) + "\n\n")
 
         f.write("Adjacency Matrix\n")
@@ -30,12 +30,13 @@ def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output,
         f.write("Result\n")
         if has_absorbing:
             f.write("Absorbing circuit detected. No shortest path computed.\n")
+        
         else:
             f.write("Shortest path from " + str(start) + " to " + str(end) + ": " + " -> ".join(map(str, path)) + "\n")
             cost = mat_L[start][end]
             f.write("Total cost: " + str(cost) + "\n")
 
-    print("Results saved in " + filename)
+    print("Saved in " + filename)
 
 
 def display_menu():
@@ -50,7 +51,7 @@ def display_menu():
     matrix_output = capture_print(display_matrix_graph, graph)
     print(matrix_output)
 
-    floyd_output = capture_print(lambda g: globals().update({"_fw_result": floyd_wharshall_algorithm(g)}), graph)
+    floyd_output = capture_print(floyd_wharshall_algorithm, graph)
     mat_L, mat_P = floyd_wharshall_algorithm(graph)
 
     if detect_absorbing_circuit(mat_L):
@@ -58,7 +59,7 @@ def display_menu():
         save_results(graph_index, [], None, None, mat_L, True, matrix_output, floyd_output)
 
     else:
-        print("Let's calculate the shortest path between two vertices")
+        print("Let's calculate the shortest path between two vertices !!!!!!!!!!!!!!!!!!!!!!")
         user_start_vertex = int(input("Choose a starting vertex : "))
         user_end_vertex = int(input("Choose an ending vertex : "))
 
@@ -74,11 +75,14 @@ def display_menu():
     yes_answer = ['y', 'yes', 'oui', 'si', 'da']
     no_answer = ['n', 'no', 'non', 'niet']
     redo_algo = input("Do you want to try again with another graph ? (Y/N) : ")
+    
     if redo_algo.lower() in no_answer:
         print("Okie Dockie my little cookie. Have a nice day and don't kill anybody at school *Mwaaaa*")
         exit()
+    
     elif redo_algo.lower() in yes_answer:
         display_menu()
+    
     else:
         exit()
 
