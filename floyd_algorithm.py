@@ -32,23 +32,33 @@ def floyd_wharshall_algorithm(graph):
     inf = 1e8       # 10^8, big number that can never be equalized
     n = len(graph)
 
-    for i in range(n) :
+    for i in range(n):
         mat_L[i][i] = 0
         for j in range(n):
             mat_P[i][j] = i
-            if j not in mat_L[i] :
+            if j not in mat_L[i]:
                 mat_L[i][j] = inf
+
+    print("\nFIRST STEP\n")
+    display_matrix_graph(mat_L)
+    display_matrix_graph(mat_P)
             
     # For each intermediate vertex
-    for k in range(n) :
+    for k in range(n):
         # For each source vertex
-        for i in range(n) :
+        for i in range(n):
             # For each destination vertex
-            for j in range(n) :
-                if (mat_L[i][k] + mat_L[k][j] < mat_L[i][j]):
+            for j in range(n):
+                if mat_L[i][k] + mat_L[k][j] < mat_L[i][j]:
                     mat_L[i][j] = mat_L[i][k] + mat_L[k][j]
                     mat_P[i][j] = mat_P[k][j]
+        print("===============")
+        print("\nNEXT STEP\n")
+        display_matrix_graph(mat_L)
+        display_matrix_graph(mat_P)
 
+    print("\n===============\n")
+    print("FINAL MATRICES") # the lasts matrices are printed 2 times
     display_matrix_graph(mat_L)
     display_matrix_graph(mat_P)
 
@@ -56,6 +66,8 @@ def floyd_wharshall_algorithm(graph):
 
 if __name__ == "__main__":
     graph_1 = convert_txt_graph_into_dict(1)
+    graph_2 = convert_txt_graph_into_dict(2)
+
     
-    floyd_wharshall_algorithm(graph_1)
+    floyd_wharshall_algorithm(graph_2)
     
