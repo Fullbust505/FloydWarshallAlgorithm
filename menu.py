@@ -61,8 +61,13 @@ def graph_choice(user_choice):
 
 #def print_matrix(matrix):
 
-
-
+"""
+def display_photo():
+    fichier = open("Agathe_s_photo_PRIVATE.txt", "r")
+    contenu = fichier.read()
+    print(contenu)
+    fichier.close()
+"""
 
 def display_menu():
     """
@@ -90,7 +95,7 @@ def display_menu():
     redo_algo = input("Do you want to try again with another graph ? (Y/N) : ")
     if redo_algo.lower in no_answer:
         print("Okie Dockie my little cookie. Have a nice day and don't kill anybody at school *Mwaaaa*")
-
+        
 
 
 display_menu()
