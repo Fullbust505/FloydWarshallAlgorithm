@@ -9,7 +9,7 @@ def load_txt_file(n):
     Returns:
         str: The string of the content of the file
     """
-    with open(f"./graphs/graph_{n}.txt") as f :
+    with open(f"./graphs/graph_{n}.txt") as f:
         file = f.read()
     return file
 
@@ -36,10 +36,10 @@ def convert_txt_graph_into_dict(n):
     extracted = extracted[2:]   # Remove the two first lines, that are not arcs
     
     graph = dict()
-    for vertex in range(n_vertices) :
+    for vertex in range(n_vertices):
         graph[vertex] = dict()
 
-    for arc in extracted :
+    for arc in extracted:
 
         curr_arc = arc.split(" ")
         curr_vertex = int(curr_arc[0])
@@ -51,7 +51,7 @@ def convert_txt_graph_into_dict(n):
     return graph
         
 
-def verify_graph(graph) :
+def verify_graph(graph):
     """Verifies if a given graph is correctly initialized, checking for type errors or missing values
 
     Args:
@@ -65,14 +65,14 @@ def verify_graph(graph) :
         bool: state of the verification
     """
     try:
-        for vertex in graph :       # Browsing through each vertex
+        for vertex in graph:       # Browsing through each vertex
             for weight in graph[vertex].values():   # Browsing through each successor of the vertex
                 if weight is None :
                     raise ValueError(f"Missing weight value at vertex {vertex}")
                 if type(weight) != int:
                     raise TypeError(f"Incorrect type for vertex's weight {vertex}")
                     
-    except ValueError as e :
+    except ValueError as e:
         print(f"Error: {e}")
         return False
     
@@ -100,18 +100,18 @@ def display_matrix_graph(graph):
     print("  " + " ".join(f"{i}" for i in range(size)))     # 2 extra spaces for readibility purpose
 
     # 2. For each vertex
-    for vertex in sorted_vertices :
+    for vertex in sorted_vertices:
         curr_row = str(vertex) 
         # Check if it's empty (no successor)
         if graph[vertex] == {} :
-            print(curr_row + " 0"*(size))      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
+            print(curr_row + " 0" *size)      # times 2 because of the extra space between columns and + 2 for the additional spaces on top used for spacing
         else :
             # If it has successors (check each column), browse them one by one, to guarentee a good print on the line
-            for j in range(size) :
+            for j in range(size):
                 curr_row += " "
-                if j in graph[vertex] : 
+                if j in graph[vertex]:
                     # Big numbers will make the table unreadable
-                    if graph[vertex][j] >= 1e8 :
+                    if graph[vertex][j] >= 1e8:
                         curr_row += "∞"
                     else :
                         curr_row += str(graph[vertex][j]) 
@@ -120,7 +120,7 @@ def display_matrix_graph(graph):
             print(curr_row)
 
 
-if __name__== '__main__' :
+if __name__ == '__main__':
     graph_1 = convert_txt_graph_into_dict(1)
 
     verify_graph(graph_1)

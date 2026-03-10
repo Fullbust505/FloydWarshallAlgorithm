@@ -49,7 +49,9 @@ def floyd_wharshall_algorithm(graph):
         for i in range(n):
             # For each destination vertex
             for j in range(n):
-                if mat_L[i][k] + mat_L[k][j] < mat_L[i][j]:
+                if mat_L[i][k] == inf or mat_L[k][j] == inf:
+                    mat_L[i][j] = mat_L[i][j] #no change
+                elif mat_L[i][k] + mat_L[k][j] < mat_L[i][j]:
                     mat_L[i][j] = mat_L[i][k] + mat_L[k][j]
                     mat_P[i][j] = mat_P[k][j]
         print("===============")
@@ -62,12 +64,57 @@ def floyd_wharshall_algorithm(graph):
     display_matrix_graph(mat_L)
     display_matrix_graph(mat_P)
 
-    return 
+    return mat_L, mat_P
+
+def detect_absorbing_circuit(mat_L):
+    """
+
+    Args:
+        mat_L: the matrix we found with Floyd-Warshall algorithm storing the cost of the shortest path
+
+    Returns:
+        A boolean saying whether it detected an absorbing circuit or not
+
+    """
+    nb_lines = len(mat_L)
+    for i in range(nb_lines):
+        if mat_L[i][i] < 0:
+            return True
+    return False
+
+
+def find_shortest_path(mat_P, start_vertex, end_vertex):
+    """
+
+    Args:
+        mat_P: the matrix we found with Floyd-Warshall algorithm storing the predecessor for each path between 2 points
+        start_vertex: begin of the path
+        end_vertex: end of the path
+
+    Returns:
+
+    """
+    shortest_path = [end_vertex]
+    curr_dest_vertex = end_vertex
+
+    while mat_P[start_vertex][curr_dest_vertex] != start_vertex:
+        shortest_path.append(mat_P[start_vertex][curr_dest_vertex])
+        curr_dest_vertex = mat_P[start_vertex][curr_dest_vertex]
+
+    shortest_path.append(start_vertex) # shortest path stored but reversed
+    shortest_path = shortest_path[::-1]
+
+    return shortest_path
+
 
 if __name__ == "__main__":
     graph_1 = convert_txt_graph_into_dict(1)
     graph_2 = convert_txt_graph_into_dict(2)
-
+    current_graph = convert_txt_graph_into_dict(11)
     
-    floyd_wharshall_algorithm(graph_2)
+    final_mat_L, final_mat_P = floyd_wharshall_algorithm(current_graph)
+    bool = detect_absorbing_circuit(final_mat_L)
+    #print(bool)
+    path = find_shortest_path(final_mat_P, 2, 0)
+    print(path)
     
