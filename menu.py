@@ -3,6 +3,7 @@ from floyd_algorithm import floyd_wharshall_algorithm, detect_absorbing_circuit,
 import io
 import sys
 
+
 def choose_a_graph():
     user_choice = int(input("Enter a number between 1 and 13 to choose a graph : "))
     return user_choice
@@ -22,7 +23,7 @@ def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output,
         f.write("Graph " + str(graph_n) + "\n\n")
 
         f.write("Adjacency Matrix\n")
-        f.write(matrix_output + "\n")
+        f.write(format_matrix_output(matrix_output) + "\n")
 
         f.write("Floyd-Warshall Steps\n")
         f.write(floyd_output + "\n")
@@ -39,6 +40,23 @@ def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output,
     print("Saved in " + filename)
 
 
+def format_matrix_output(matrix_output):
+    lines = matrix_output.strip().split("\n")
+    if not lines:
+        return matrix_output
+
+    col_width = max(len(cell) for line in lines for cell in line.split())
+
+    formatted = ""
+    for i, line in enumerate(lines):
+        cells = line.split()
+        if i == 0:
+            formatted += " " + "".join(cell.rjust(col_width) for cell in cells) + "\n"
+        else:
+            formatted += "".join(cell.rjust(col_width) for cell in cells) + "\n"
+    return formatted
+
+
 def display_menu():
     graph_index = choose_a_graph()
 
@@ -49,7 +67,8 @@ def display_menu():
     graph = convert_txt_graph_into_dict(graph_index)
 
     matrix_output = capture_print(display_matrix_graph, graph)
-    print(matrix_output)
+    print(format_matrix_output(matrix_output))
+
 
     floyd_output = capture_print(floyd_wharshall_algorithm, graph)
     mat_L, mat_P = floyd_wharshall_algorithm(graph)
