@@ -25,7 +25,7 @@ def capture_print(func, *args):
     sys.stdout = buffer                 #Redirect the prints to the buffer file
     result = func(*args)                #To get the prints by executing the target function
     sys.stdout = sys.__stdout__         #Stop the redirect
-    return buffer.getvalue(), result    #put it in the file
+    return buffer.getvalue(), result    #put it in the file and return the result of the function
 
 # Clean the parameter from the color codes
 def strip_ansi_codes(text):
