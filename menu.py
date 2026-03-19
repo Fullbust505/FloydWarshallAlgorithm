@@ -2,31 +2,53 @@ from import_graphs import convert_txt_graph_into_dict, display_matrix_graph
 from floyd_algorithm import floyd_wharshall_algorithm, detect_absorbing_circuit, find_shortest_path, detect_self_cycle
 import io
 import sys
+import re
 
-
+# Check the validity of the user input
+def secure_input(txt, valid_range):
+    while True:
+        try:
+            user_input = int(input(txt))
+            if user_input in valid_range:
+                return user_input
+            else:
+                print(f"Please enter a number between {valid_range[0]} and {valid_range[-1]}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+           
 def choose_a_graph():
-    user_choice = int(input("Enter a number between 1 and 13 to choose a graph : "))
+    user_choice = secure_input("Enter a number between 1 and 13 to choose a graph : ", list(range(1, 14)))
     return user_choice
 
-
 def capture_print(func, *args):
-    buffer = io.StringIO()          #To keep in memory the prints
-    sys.stdout = buffer             #Redirect the prints to the buffer file
-    func(*args)                     #To get the prints by executing the target function
-    sys.stdout = sys.__stdout__     #Stop the redirect
-    return buffer.getvalue()        #put it in the file
+    buffer = io.StringIO()              #To keep in memory the prints
+    sys.stdout = buffer                 #Redirect the prints to the buffer file
+    result = func(*args)                #To get the prints by executing the target function
+    sys.stdout = sys.__stdout__         #Stop the redirect
+    return buffer.getvalue(), result    #put it in the file
+
+# Clean the parameter from the color codes
+def strip_ansi_codes(text):
+    # Remove all the code of type : \x1b[...m
+    ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
+    return ansi_escape.sub('', text)
 
 
 def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output, floyd_output):
     filename = "result_graph_" + str(graph_n) + ".txt"
+
+    # Remove the color codes from the outputs
+    clean_matrix = strip_ansi_codes(matrix_output)
+    clean_floyd_output = strip_ansi_codes(floyd_output)
+
     with open(filename, "w", encoding="utf-8") as f:            #bcs inf symbole doesn't work w/ txt
         f.write("Graph " + str(graph_n) + "\n\n")
 
         f.write("Adjacency Matrix\n")
-        f.write(format_matrix_output(matrix_output) + "\n")
+        f.write(clean_matrix + "\n")
 
         f.write("Floyd-Warshall Steps\n")
-        f.write(floyd_output + "\n")
+        f.write(clean_floyd_output + "\n")
 
         f.write("Result\n")
         if has_absorbing:
@@ -39,39 +61,24 @@ def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output,
 
     print("Saved in " + filename)
 
-
-def format_matrix_output(matrix_output):
-    lines = matrix_output.strip().split("\n")
-    if not lines:
-        return matrix_output
-
-    col_width = max(len(cell) for line in lines for cell in line.split())
-
-    formatted = ""
-    for i, line in enumerate(lines):
-        cells = line.split()
-        if i == 0:
-            formatted += " " + "".join(cell.rjust(col_width) for cell in cells) + "\n"
-        else:
-            formatted += "".join(cell.rjust(col_width) for cell in cells) + "\n"
-    return formatted
-
-
 def display_menu():
+
     graph_index = choose_a_graph()
 
     if graph_index < 1 or graph_index > 13:
         display_menu()
         return
 
+    # Loasd the graph and convert it into a dict
     graph = convert_txt_graph_into_dict(graph_index)
 
-    matrix_output = capture_print(display_matrix_graph, graph)
-    print(format_matrix_output(matrix_output))
+    # Display the graph as a matrix and capture its prints
+    matrix_output, _ = capture_print(display_matrix_graph, graph)
+    print(matrix_output)
 
-
-    floyd_output = capture_print(floyd_wharshall_algorithm, graph)
-    mat_L, mat_P = floyd_wharshall_algorithm(graph)
+    # Run the Floyd-Warshall algorithm and capture its prints
+    floyd_output, (mat_L, mat_P) = capture_print(floyd_wharshall_algorithm, graph)
+    print(floyd_output)
 
     if detect_absorbing_circuit(mat_L):
         print("Absorbing circuit detected. No solution.")
@@ -79,8 +86,8 @@ def display_menu():
 
     else:
         print("Let's calculate the shortest path between two vertices !!!!!!!!!!!!!!!!!!!!!!")
-        user_start_vertex = int(input("Choose a starting vertex : "))
-        user_end_vertex = int(input("Choose an ending vertex : "))
+        user_start_vertex = secure_input("Choose a starting vertex : ", list(range(len(graph))))
+        user_end_vertex = secure_input("Choose an ending vertex : ", list(range(len(graph))))
 
         if mat_L[user_start_vertex][user_end_vertex] >= 1e8:
             print("No path exists between " + str(user_start_vertex) + " and " + str(user_end_vertex))
