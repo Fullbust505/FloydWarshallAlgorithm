@@ -1,4 +1,3 @@
-import json
 from tabulate import tabulate
 from colorama import Fore, Style
 
@@ -46,7 +45,7 @@ def convert_txt_graph_into_dict(n):
         curr_arc = arc.split(" ")
         curr_vertex = int(curr_arc[0])
         dest_vertex = int(curr_arc[1])
-        weight = int(curr_arc[2])
+        weight = float(curr_arc[2])
 
         graph[curr_vertex][dest_vertex] = weight
             

@@ -17,7 +17,7 @@ def secure_input(txt, valid_range):
             print("Invalid input. Please enter a valid integer.")
            
 def choose_a_graph():
-    user_choice = secure_input("Enter a number between 1 and 13 to choose a graph : ", list(range(1, 14)))
+    user_choice = secure_input("Enter a number between 1 and 14 to choose a graph : ", list(range(1, 15)))
     return user_choice
 
 def capture_print(func, *args):
@@ -65,7 +65,7 @@ def display_menu():
 
     graph_index = choose_a_graph()
 
-    if graph_index < 1 or graph_index > 13:
+    if graph_index < 1 or graph_index > 14:
         display_menu()
         return
 
