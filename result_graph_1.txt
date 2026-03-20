@@ -171,5 +171,5 @@ FINAL MATRICES
 ╰────┴─────┴─────┴─────┴─────╯
 
 Result
-Shortest path from 2 to 2: 2 -> 2
-Total cost: 0
+Shortest path from 2 to 3: 2 -> 3
+Total cost: 2
