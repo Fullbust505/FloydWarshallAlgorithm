@@ -1,4 +1,6 @@
 import json
+from tabulate import tabulate
+from colorama import Fore, Style
 
 def load_txt_file(n):
     """Loads the graph of the corresponding given integer
@@ -84,7 +86,7 @@ def verify_graph(graph):
     print("All checks passed : the graph is correct")
     return True
 
-def display_matrix_graph(graph):
+def old_display_matrix_graph(graph):
     """Prints the adjacency matrix of a graph.
 
     Args:
@@ -119,6 +121,41 @@ def display_matrix_graph(graph):
                     curr_row += "0"
             print(curr_row)
 
+
+
+def display_matrix_graph(graph):
+    """Prints the adjacency matrix of a graph using the tabulate library
+
+    Args:
+        graph (dict): A graph imported from a JSON file
+    """
+    vertices = sorted(graph.keys())
+    size = len(vertices)
+
+    # Construct lines
+    table_data = []
+    for vertex in vertices:
+        curr_row = [Fore.BLUE + str(vertex) + Style.RESET_ALL]
+        if graph[vertex] == {} :
+            for _ in range(size):
+                curr_row.append("0")
+        else :
+            # If it has successors (check each column), browse them one by one, to guarentee a good print on the line
+            for j in range(size):
+                if j in graph[vertex]:
+                    # Big numbers will make the table unreadable
+                    if graph[vertex][j] >= 1e8:
+                        curr_row.append("∞")
+                    else :
+                        curr_row.append(str(graph[vertex][j]))
+                else :
+                    curr_row.append("0")
+        # add the current row to the table
+        table_data.append(curr_row)
+
+    # Construct headers with color
+    headers = [""] + [f"{Fore.BLUE}{n}{Style.RESET_ALL}" for n in vertices] 
+    print(tabulate(table_data, headers=headers, tablefmt="rounded_grid"))
 
 if __name__ == '__main__':
     graph_1 = convert_txt_graph_into_dict(1)
