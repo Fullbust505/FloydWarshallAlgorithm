@@ -81,7 +81,7 @@ def verify_graph(graph):
     except TypeError as e:
         print(f"Error : {e}")
         return False
-    # I mean, we could do other errors handling, but i think it's the strict minimum for now, it's really just for convenience
+    # We could do other errors handling, but i think it's the strict minimum for now, it's really just for convenience
 
     print("All checks passed : the graph is correct")
     return True

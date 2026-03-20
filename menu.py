@@ -41,7 +41,7 @@ def save_results(graph_n, path, start, end, mat_L, has_absorbing, matrix_output,
     clean_matrix = strip_ansi_codes(matrix_output)
     clean_floyd_output = strip_ansi_codes(floyd_output)
 
-    with open(filename, "w", encoding="utf-8") as f:            #bcs inf symbole doesn't work w/ txt
+    with open(filename, "w", encoding="utf-8") as f:            # because inf symbol doesn't work with txt format
         f.write("Graph " + str(graph_n) + "\n\n")
 
         f.write("Adjacency Matrix\n")
@@ -85,7 +85,7 @@ def display_menu():
         save_results(graph_index, [], None, None, mat_L, True, matrix_output, floyd_output)
 
     else:
-        print("Let's calculate the shortest path between two vertices !!!!!!!!!!!!!!!!!!!!!!")
+        print("Let's calculate the shortest path between two vertices !")
         user_start_vertex = secure_input("Choose a starting vertex : ", list(range(len(graph))))
         user_end_vertex = secure_input("Choose an ending vertex : ", list(range(len(graph))))
 
@@ -103,7 +103,7 @@ def display_menu():
     redo_algo = input("Do you want to try again with another graph ? (Y/N) : ")
     
     if redo_algo.lower() in no_answer:
-        print("Okie Dockie my little cookie. Have a nice day and don't kill anybody at school *Mwaaaa*")
+        print("See you soon !")
         exit()
     
     elif redo_algo.lower() in yes_answer:

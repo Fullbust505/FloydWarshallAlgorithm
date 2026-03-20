@@ -113,8 +113,7 @@ if __name__ == "__main__":
     current_graph = convert_txt_graph_into_dict(11)
     
     final_mat_L, final_mat_P = floyd_wharshall_algorithm(current_graph)
-    bool = detect_absorbing_circuit(final_mat_L)
-    #print(bool)
+    print(detect_absorbing_circuit(final_mat_L))
     path = find_shortest_path(final_mat_P, 2, 0)
     print(path)
     
