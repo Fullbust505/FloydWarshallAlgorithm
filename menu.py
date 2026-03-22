@@ -69,7 +69,7 @@ def display_menu():
         display_menu()
         return
 
-    # Loasd the graph and convert it into a dict
+    # Loads the graph and convert it into a dict
     graph = convert_txt_graph_into_dict(graph_index)
 
     # Display the graph as a matrix and capture its prints
